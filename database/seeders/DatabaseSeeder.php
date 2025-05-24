@@ -8,6 +8,8 @@ use Illuminate\Database\Seeder;
 
 use Illuminate\Support\Facades\Hash;
 
+use Spatie\Permission\Models\Role;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -17,10 +19,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
+        // Create admin user
+        $admin = User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
         ]);
+
+        // Create roles
+        $adminRole = Role::create(['name' => 'Admin']);
+        Role::create(['name' => 'User']);
+
+        // Assign the "Admin" role to the user
+        $admin->assignRole($adminRole);
     }
 }
