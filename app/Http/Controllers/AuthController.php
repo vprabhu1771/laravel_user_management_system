@@ -31,6 +31,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->assignRole('User');
+
         Auth::login($user);
 
         return redirect()->route('profile');
@@ -52,6 +54,17 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             
             $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard'); // Adjust route name as needed
+            }
+
+            if ($user->isUser()) {
+                // return redirect()->route('user.dashboard'); // Adjust route name as needed
+                return redirect()->route('home.index'); // Adjust route name as needed
+            }
             
             return redirect('profile');
         }
